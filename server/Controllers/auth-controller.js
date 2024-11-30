@@ -1,5 +1,8 @@
 
+const bcrypt = require('bcrypt');
 const User = require('../model/user-model');
+const jwt = require("jsonwebtoken");
+const { generateToken } = require("../middleware/authMiddleware"); 
 
 const home = async (req, res) => {
     try{
@@ -22,11 +25,17 @@ const register = async (req, res) => {
             return res.status(400).json({error: "User already exists"});
         }
 
-        const user = await User.create({username,email,phone ,password});
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const user = await User.create({username,email,phone ,password: hashedPassword});
+    
+
         if(!user){
             return res.status(400).json({error: "Failed to register user , enter details properly."});
         }
         console.log(user);
+
+        const token = await user.generateToken(user);
 
         res.status(201).json({
             message: "User registered successfully",
@@ -35,7 +44,8 @@ const register = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 phone: user.phone
-            }});
+            },token: token});
+
         }catch(err){
         console.log(err);
     }
