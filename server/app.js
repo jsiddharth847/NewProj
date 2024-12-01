@@ -7,6 +7,7 @@ const connectDB = require("./db/index");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 var indexRouter = require("./routes/auth-router");
+const errorMiddleware = require("./middlewares/errorMiddleware");
 // var usersRouter = require('./routes/users');
 
 var app = express();
@@ -24,7 +25,7 @@ app.use("/api/auth", indexRouter); // All routes in indexRouter will now start w
 
 // If you have other routes, you can add them here
 // app.use('/users', usersRouter);
-
+app.use(errorMiddleware);
 connectDB()
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {
