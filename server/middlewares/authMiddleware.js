@@ -1,28 +1,26 @@
+const jwt = require("jsonwebtoken");
 
-const jwt = require('jsonwebtoken');
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user._id, isAdmin: user.isAdmin },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+};
 
-const generateToken = async(user) =>{
-try{
-    
-    const{_id, _email , _isAdmin } = user;
+const verifyToken = (req, res, next) => {
+  const token = req.header("Authorization")?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ error: "Access denied. No token provided." });
+  }
 
-    const jwtSecret = process.env.JWT_SECRET;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(400).json({ error: "Invalid token." });
+  }
+};
 
-    if(!jwtSecret){
-        throw new Error("JWT Secret not defined in env");
-
-    }
-
-    const token = jwt.sign({
-
-        userID : _id.toString(),
-        email: _email,  
-        isAdmin : _isAdmin
-    }, jwtSecret,{expiresIn: '1h'});
-
-
-    return token;
-}catch(e){
-    console.error("Error Generating token",e);
-    throw new Error('Failed to generate authentication token');
-}}; 
+module.exports = { generateToken, verifyToken };
