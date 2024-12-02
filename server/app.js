@@ -6,7 +6,8 @@ const dotenv = require("dotenv").config();
 const connectDB = require("./db/index");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
-var indexRouter = require("./routes/auth-router");
+const indexRouter = require("./routes/auth-router");
+const contactRouter = require("./routes/contact-router");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 // var usersRouter = require('./routes/users');
 
@@ -22,10 +23,10 @@ app.use(express.static(path.join(__dirname, "public"))); // Static files (if nee
 
 // Use router for API endpoints
 app.use("/api/auth", indexRouter); // All routes in indexRouter will now start with /api/auth
-
-// If you have other routes, you can add them here
-// app.use('/users', usersRouter);
 app.use(errorMiddleware);
+app.use("/", contactRouter); // All routes in contactRouter will now start with / 
+// app.use('/users', usersRouter);
+// app.use(errorMiddleware);
 connectDB()
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {
