@@ -9,7 +9,7 @@
 //   } catch (error) {
 //     const status = 422;
 //     const message = "Invalid request payload";
-    
+
 //     // Check if error.issues is defined and contains at least one element
 //     let extradetails = "Unknown validation error occurred";
 //     if (error.issues && error.issues.length > 0) {
@@ -34,8 +34,6 @@
 
 // module.exports = validate;
 
-
-
 const validate = (schema) => async (req, res, next) => {
   try {
     const parsebody = await schema.parseAsync(req.body);
@@ -47,7 +45,7 @@ const validate = (schema) => async (req, res, next) => {
     const message = "Invalid request payload";
     const extradetails = error.errors[0].message;
     console.log(error.errors[0].message);
-    
+
     const err = {
       status,
       message,
@@ -59,4 +57,4 @@ const validate = (schema) => async (req, res, next) => {
   }
 };
 
-module.exports = validate;
+module.exports = { validate };
