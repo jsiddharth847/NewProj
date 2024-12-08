@@ -5,6 +5,7 @@ const { contactUsSchema } = require("../validator/validator");
 const { validate } = require("../middlewares/validatorMiddleware");
 const contactController = require("../Controllers/contact-controller");
 
+// adding route for contact page
 router
   .route("/contact")
   .post(validate(contactUsSchema), contactController.contactUs);
